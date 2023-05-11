@@ -1,7 +1,7 @@
 # ColorEmojiDemo
 twinBASIC DirectX Color Emoji Demo
 
-![image](https://github.com/fafalone/ColorEmojiDemo/assets/7834493/eb4e8913-52de-4c09-975b-81167439b999)
+![image](https://github.com/fafalone/ColorEmojiDemo/assets/7834493/eb559c48-a58c-4d63-a4bf-084552cbd274)
 
 Unfortunately the basic Windows GDI functions don't support colored fonts, so even if you have Unicode-supporting controls, your emojis would only show in black and white, just like when you paste them in Windows Explorer. This is a simple demo that shows how to use Direct2D and DirectWrite to display emojis in color. It's mostly based on [this C++ example](https://stackoverflow.com/a/71640767/6065864) by Code Doggo; for simplicity, I render it directly onto a Form rather than create my own window, which would be less useful for tB programmers anyway. There's limited use in this current forum, the ultimate goal here would be to turn this into an edit control.
 
