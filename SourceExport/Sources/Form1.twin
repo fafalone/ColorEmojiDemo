@@ -1,0 +1,356 @@
+[ Description ("") ]
+[ FormDesignerId ("6F8E321C-0C25-436B-9660-62530486ED8D") ]
+[ PredeclaredId ]
+Class Form1
+
+
+Private WindowHandle As LongPtr
+Private DISPLAY_TEXT As String
+
+Private DWriteFactory As IDWriteFactory
+Private Direct2dFactory As ID2D1Factory
+Private RenderTarget As ID2D1HwndRenderTarget
+Private TextBlackBrush As ID2D1SolidColorBrush
+
+Public Const dbg_PrintToImmediate As Boolean = True 'This control has very extensive debug information, you may not want
+                                                      'to see that in your IDE.
+Public Const dbg_IncludeDate As Boolean = True 'Prefix all Debug output with the date and time, [yyyy-mm-dd Hh:Mm:Ss]
+Public Const dbg_IncludeName As Boolean = False 'Include Ambient.Name
+Public Const dbg_dtFormat As String = "yyyy-mm-dd Hh:nn:Ss"
+Public Const dbg_RaiseEvent As Boolean = False 'Raise DebugMessage event
+Public Const dbg_MinLevel As Long = 0&   'Only log to immediate/file messages >= this level
+
+Public Sub DebugAppend(ByVal sMsg As String, Optional ilvl As Long = 0)
+If ilvl < dbg_MinLevel Then Exit Sub
+Dim sOut As String
+If dbg_IncludeDate Then sOut = "[" & Format$(Now, dbg_dtFormat) & "] "
+If dbg_IncludeName Then sOut = sOut & "Form1" & ": "
+sOut = sOut & sMsg
+If dbg_PrintToImmediate Then Debug.Print sOut
+'If dbg_RaiseEvent = True Then RaiseEvent zDebugMessage(sOut, ilvl)
+
+End Sub
+
+
+Private Function SUCCEEDED(hr As Long) As Boolean
+    SUCCEEDED = (hr >= 0)
+End Function
+
+Private Function CreateDeviceIndependentResources() As Long
+On Error Resume Next 'Manual error handling
+Dim hr As Long '= S_OK
+hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, IID_ID2D1Factory, ByVal 0, Direct2dFactory)
+If (Direct2dFactory Is Nothing) Then hr = S_FALSE
+If SUCCEEDED(hr) Then
+    hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, IID_IDWriteFactory, DWriteFactory)
+    If (DWriteFactory Is Nothing) Then hr = S_FALSE
+    DebugAppend "D2D1CreateFactory succeeded; DWriteCreateFactory hr=0x" & Hex$(hr)
+Else
+    DebugAppend "D2D1CreateFactory failed, hr=0x" & Hex$(hr)
+End If
+Return hr
+End Function
+
+Private Function CreateDeviceResources() As Long
+On Error Resume Next
+Dim hr As Long '= S_OK
+Dim rc As RECT
+If RenderTarget Is Nothing Then
+    GetClientRect WindowHandle, rc
+    Dim size As D2D1_SIZE_U
+    Dim rtProps As D2D1_RENDER_TARGET_PROPERTIES
+    Dim hwndProps As D2D1_HWND_RENDER_TARGET_PROPERTIES
+    size.width = rc.Right - rc.Left
+    size.Height = rc.Bottom - rc.Top
+    hwndProps.hwnd = WindowHandle
+    hwndProps.pixelSize = size
+    Set RenderTarget = Direct2dFactory.CreateHwndRenderTarget(rtProps, hwndProps)
+    hr = Err.LastHResult
+    If SUCCEEDED(hr) Then
+        Dim clrBlack As D2D1_COLOR_F
+        clrBlack.a = 1#
+        Set TextBlackBrush = RenderTarget.CreateSolidColorBrush(clrBlack, vbNullPtr)
+        hr = Err.LastHResult
+        DebugAppend "D2D1CreateFactory::CreateHwndRenderTarget succeeded; RenderTarget.CreateSolidColorBrush hr=0x" & Hex$(hr)
+    Else
+        DebugAppend "D2D1CreateFactory::CreateHwndRenderTarget failed, hr=0x" & Hex$(hr)
+    End If
+    CreateDeviceResources = hr
+End If
+Exit Function
+e0:
+    hr = Err.Number
+    Resume Next
+End Function
+
+Public Function OnRender() As Long
+    On Error Resume Next
+    Dim hr As Long '= S_OK
+    Dim RenderCanvasArea As D2D1_SIZE_F
+    Dim TextFormat As IDWriteTextFormat
+    Dim TextCanvasArea As D2D1_RECT_F
+    Dim clrWhite As D2D1_COLOR_F
+    Dim rc As RECT
+    hr = CreateDeviceResources()
+    
+    If SUCCEEDED(hr) Then
+        RenderTarget.BeginDraw
+        'RenderCanvasArea = RenderTarget.GetSize()
+        GetClientRect WindowHandle, rc
+        RenderCanvasArea.width = rc.Right
+        RenderCanvasArea.Height = rc.Bottom
+        clrWhite.r = 1#: clrWhite.g = 1#: clrWhite.b = 1#: clrWhite.a = 1#
+        RenderTarget.Clear clrWhite ' D2D1.ColorF(White)
+        hr = Err.LastHResult
+        If SUCCEEDED(hr) Then
+            Set TextFormat = DWriteFactory.CreateTextFormat(StrPtr("Segoe UI"), _
+                                                            Nothing, _
+                                                            DWRITE_FONT_WEIGHT_REGULAR, _
+                                                            DWRITE_FONT_STYLE_NORMAL, _
+                                                            DWRITE_FONT_STRETCH_NORMAL, _
+                                                            25, _
+                                                            StrPtr("en-us"))
+            hr = Err.LastHResult
+            If (SUCCEEDED(hr)) And ((TextFormat Is Nothing) = False) Then
+                TextFormat.SetTextAlignment (DWRITE_TEXT_ALIGNMENT_LEADING)
+                TextFormat.SetParagraphAlignment (DWRITE_PARAGRAPH_ALIGNMENT_NEAR)
+                TextFormat.SetReadingDirection (DWRITE_READING_DIRECTION_LEFT_TO_RIGHT)
+                TextFormat.SetWordWrapping (DWRITE_WORD_WRAPPING_WRAP)
+                
+                TextCanvasArea.Right = RenderCanvasArea.width
+                TextCanvasArea.Bottom = RenderCanvasArea.Height
+                
+                RenderTarget.DrawText StrPtr(DISPLAY_TEXT), Len(DISPLAY_TEXT), ByVal ObjPtr(TextFormat), TextCanvasArea, TextBlackBrush, D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT, 0
+                
+            End If
+        End If
+        
+        RenderTarget.EndDraw ByVal 0, ByVal 0
+        hr = Err.LastHResult
+    End If
+    
+    If hr = D2DERR_RECREATE_TARGET Then
+        Set RenderTarget = Nothing
+        Set TextBlackBrush = Nothing
+        hr = S_OK
+    End If
+    
+    Return hr
+
+End Function
+
+Private Sub Form_Load() Handles Form.Load
+    WindowHandle = Form1.hWnd
+    DISPLAY_TEXT = "Test 😀 😬 😁 😂 😃 😄 😅 😆" & vbCrLf & "omg, color emojis! 😍" & vbCrLf & "🎉 and we're off! 🚀"
+    If CreateDeviceIndependentResources = S_OK Then
+        Subclass2 Form1.hWnd, AddressOf FormWndProc, Form1.hWnd
+    End If
+End Sub
+Private Sub Form_Unload(Cancel As Integer) Handles Form.Unload
+    UnSubclass2 Form1.hWnd, AddressOf FormWndProc, Form1.hWnd
+    Set Direct2dFactory = Nothing
+    Set DWriteFactory = Nothing
+    Set RenderTarget = Nothing
+End Sub
+    
+Private Function Subclass2(hWnd As LongPtr, lpFN As LongPtr, Optional uId As LongPtr = 0&, Optional dwRefData As LongPtr = 0&) As Boolean
+If uId = 0 Then uId = hWnd
+    Return SetWindowSubclass(hWnd, lpFN, uId, dwRefData):      Debug.Assert Subclass2
+End Function
+
+Private Function UnSubclass2(hWnd As LongPtr, ByVal lpFN As LongPtr, pid As LongPtr) As Boolean
+    Return RemoveWindowSubclass(hWnd, lpFN, pid)
+End Function
+
+Private Function FormWndProc(ByVal hWnd As LongPtr, ByVal uMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr, ByVal uIdSubclass As LongPtr, ByVal dwRefData As LongPtr) As LongPtr
+	Select Case uMsg
+        Case WM_SIZE
+            Dim cx As Long = LoWord(CLng(lParam))
+            Dim cy As Long = HiWord(CLng(lParam))
+            
+            If RenderTarget IsNot Nothing Then
+                Dim tSz As D2D1_SIZE_U
+                tSz.width = cx
+                tSz.Height = cy
+                RenderTarget.Resize tSz
+                
+            End If
+            DebugAppend "size::" & cx & "," & cy
+            Exit Function
+        
+        Case WM_DISPLAYCHANGE
+            InvalidateRect hWnd, vbNullPtr, CFALSE
+            
+            Exit Function
+            
+        Case WM_PAINT
+            OnRender()
+            ValidateRect hWnd, vbNullPtr
+            
+            Exit Function
+            
+        Case WM_DESTROY
+            Call UnSubclass2(hWnd, AddressOf FormWndProc, uIdSubclass)
+    End Select
+    
+    Return DefSubclassProc(hWnd, uMsg, wParam, lParam)
+End Function
+
+
+End Class
+
+
+'A curiosity is what the difference is the above, working version, and the following:
+' Private DWriteFactory As IDWriteFactory
+' Private Direct2dFactory As ID2D1Factory
+' Private RenderTarget As ID2D1HwndRenderTarget
+' Private TextBlackBrush As ID2D1SolidColorBrush
+' Private WindowHandle As LongPtr
+' Private Const DISPLAY_TEXT = "Test 😀 😬 😁 😂 😃 😄 😅 😆" & vbcrlf & "omg, color emojis! 😍"
+
+' Private Const sc_redShift   = 16
+' Private Const sc_greenShift = 8
+' Private Const sc_blueShift  = 0
+
+' Private Const sc_redMask = &Hff << sc_redShift
+' Private Const sc_greenMask = &Hff << sc_greenShift
+' Private Const sc_blueMask = &Hff << sc_blueShift
+
+' Private Const dbg_PrintToImmediate As Boolean = True 'This control has very extensive debug information, you may not want
+'                                                       'to see that in your IDE.
+' Private Const dbg_IncludeDate As Boolean = True 'Prefix all Debug output with the date and time, [yyyy-mm-dd Hh:Mm:Ss]
+' Private Const dbg_IncludeName As Boolean = True 'Include Ambient.Name
+' Private Const dbg_dtFormat As String = "yyyy-mm-dd Hh:nn:Ss"
+' Private Const dbg_RaiseEvent As Boolean = False 'Raise DebugMessage event
+' Private Const dbg_MinLevel As Long = 0&   'Only log to immediate/file messages >= this level
+
+' Private Sub DebugAppend(ByVal sMsg As String, Optional ilvl As Long = 0)
+' If ilvl < dbg_MinLevel Then Exit Sub
+' Dim sOut As String
+' If dbg_IncludeDate Then sOut = "[" & Format$(Now, dbg_dtFormat) & "] "
+' If dbg_IncludeName Then sOut = sOut & CurrentComponentName & ": "
+' sOut = sOut & sMsg
+' If dbg_PrintToImmediate Then Debug.Print sOut
+' 'If dbg_RaiseEvent = True Then RaiseEvent zDebugMessage(sOut, ilvl)
+
+' End Sub
+
+
+
+' Private Function SUCCEEDED(hr As Long) As Boolean
+'     Return hr >= 0
+' End Function
+
+' Private Function CreateDeviceIndependentResources() As Long
+' On Error Resume Next 'Manual error handling
+' Dim hr As Long = S_OK
+' hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, IID_ID2D1Factory, ByVal 0, Direct2dFactory)
+' If SUCCEEDED(hr) Then
+'     hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, IID_IDWriteFactory, DWriteFactory)
+'     DebugAppend "D2D1CreateFactory succeeded; DWriteCreateFactory hr=0x" & Hex$(hr)
+' Else
+'     DebugAppend "D2D1CreateFactory failed, hr=0x" & Hex$(hr)
+' End If
+' Return hr
+' End Function
+
+' Private Function CreateDeviceResources() As Long
+' On Error Resume Next 'Manual error handling
+' Dim hr As Long = S_OK
+' Dim rc As RECT
+' If RenderTarget Is Nothing Then
+'     GetClientRect WindowHandle, rc
+'     Dim size As D2D1_SIZE_U
+'     Dim rtProps As D2D1_RENDER_TARGET_PROPERTIES
+'     Dim hwndProps As D2D1_HWND_RENDER_TARGET_PROPERTIES
+'     size.width = rc.Right - rc.Left
+'     size.Height = rc.Bottom - rc.Top
+'     hwndProps.hwnd = WindowHandle
+'     hwndProps.pixelSize = size
+'     Set RenderTarget = Direct2dFactory.CreateHwndRenderTarget(rtProps, hwndProps)
+'     hr = Err.LastHResult
+'     If SUCCEEDED(hr) Then
+'         Set TextBlackBrush = RenderTarget.CreateSolidColorBrush(D2D1.ColorF(Black), vbNullPtr)
+'         hr = Err.LastHResult
+'         DebugAppend "D2D1CreateFactory::CreateHwndRenderTarget succeeded; RenderTarget.CreateSolidColorBrush hr=0x" & Hex$(hr)
+'     Else
+'         DebugAppend "D2D1CreateFactory::CreateHwndRenderTarget failed, hr=0x" & Hex$(hr)
+'     End If
+'     Return hr
+' End If
+' End Function
+
+' Private Sub InitColor(u As D2D1_COLOR_F, ByVal clr As Long, ByVal alpha As Single)
+'     Dim r As Single = ((clr And sc_redMask) >> sc_redShift) / 255
+'     Dim g As Single = ((clr And sc_greenMask) >> sc_greenShift) / 255
+'     Dim b As Single = ((clr And sc_blueMask) >> sc_blueShift) / 255
+'     Dim a As Single = alpha
+'     u.r = r: u.g = g: u.b = b: u.a = a
+' End Sub
+
+' Private Function OnRender() As Long
+'     On Error Resume Next 'Manual error handling
+'     Dim hr As Long = S_OK
+'     Dim RenderCanvasArea As D2D1_SIZE_F
+'     Dim TextFormat As IDWriteTextFormat
+'     Dim TextCanvasArea As D2D1_RECT_F
+'     Dim clrWhite As D2D1_COLOR_F
+    
+'     hr = CreateDeviceResources()
+    
+'     If SUCCEEDED(hr) Then
+'         RenderTarget.BeginDraw()
+'         RenderCanvasArea = RenderTarget.GetSize()
+'         'InitColor clrWhite, White, 1.0
+'         ' Debug.Print "DoNothing"
+'         clrWhite.r = 1.0: clrWhite.g = 1.0: clrWhite.b = 1.0: clrWhite.a = 1.0
+'         RenderTarget.Clear clrWhite ' D2D1.ColorF(White)
+'         hr = Err.LastHResult
+'         If SUCCEEDED(hr) Then
+'             Set TextFormat = DWriteFactory.CreateTextFormat(StrPtr("Segoe UI"), _
+'                                                             Nothing, _
+'                                                             DWRITE_FONT_WEIGHT_REGULAR, _
+'                                                             DWRITE_FONT_STYLE_NORMAL, _
+'                                                             DWRITE_FONT_STRETCH_NORMAL, _
+'                                                             25, _
+'                                                             StrPtr("en-us"))
+'             hr = Err.LastHResult
+'             If (SUCCEEDED(hr) And (TextFormat IsNot Nothing)) Then
+'                 TextFormat.SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING)
+'                 TextFormat.SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR)
+'                 TextFormat.SetReadingDirection(DWRITE_READING_DIRECTION_LEFT_TO_RIGHT)
+'                 TextFormat.SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP)
+                
+'                 TextCanvasArea.Right = RenderCanvasArea.width
+'                 TextCanvasArea.Bottom = RenderCanvasArea.Height
+                
+'                 RenderTarget.DrawText StrPtr(DISPLAY_TEXT), Len(DISPLAY_TEXT), ByVal ObjPtr(TextFormat), TextCanvasArea, TextBlackBrush, D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT, 0
+                
+'             End If
+'         End If
+        
+'         RenderTarget.EndDraw ByVal 0, ByVal 0
+'         hr = Err.LastHResult
+'     End If
+    
+'     If hr = D2DERR_RECREATE_TARGET Then
+'         Set RenderTarget = Nothing
+'         Set TextBlackBrush = Nothing
+'         hr = S_OK
+'     End If
+    
+'     Return hr
+' End Function
+
+' Private Sub Form_Load() Handles Form.Load
+'     WindowHandle = Form1.hWnd
+'     If CreateDeviceIndependentResources = S_OK Then
+'         Subclass2 Form1.hWnd, AddressOf FormWndProc, Form1.hWnd
+'     End If
+' End Sub
+' Private Sub Form_Unload(Cancel As Integer) Handles Form.Unload
+'     UnSubclass2 Form1.hWnd, AddressOf FormWndProc, Form1.hWnd
+'     Set Direct2dFactory = Nothing
+'     Set DWriteFactory = Nothing
+'     Set RenderTarget = Nothing
+' End Sub

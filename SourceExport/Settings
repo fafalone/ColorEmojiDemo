@@ -1,0 +1,59 @@
+{
+	"configuration.inherits": "Defaults",
+	"project.appTitle": "ColorEmojiDemo",
+	"project.buildPath": "${SourcePath}\\Build\\${ProjectName}_${Architecture}.${FileExtension}",
+	"project.buildType": "Standard EXE",
+	"project.description": "Direct2D ColorEmojiDemo",
+	"project.exportPathIsV2": true,
+	"project.forceDpiAwarenessAtStartup": "NONE",
+	"project.id": "{621322BC-E6D2-46CC-9432-A5C3E82BFEB8}",
+	"project.name": "ColorEmojiDemo",
+	"project.optionExplicit": true,
+	"project.references": [
+		{
+			"hasBeenSplit": true,
+			"id": "{F50B82D0-DCAB-43FE-9631-11959D4A4728}",
+			"isCompilerPackage": true,
+			"licence": "MIT",
+			"name": "[COMPILER PACKAGE] WinNativeForms Package",
+			"path32": "/Packages/WindowsControlsPackage",
+			"path64": "/Packages/WindowsControlsPackage",
+			"publishedDate": "09-FEB-2022",
+			"publishedTime": "15:48:54",
+			"publisher": "TWINBASIC-COMPILER",
+			"symbolId": "WindowsControlsPackage",
+			"versionBuild": 0,
+			"versionMajor": 0,
+			"versionMinor": 0,
+			"versionRevision": 31
+		},
+		{
+			"id": "{00020430-0000-0000-C000-000000000046}",
+			"lcid": 0,
+			"name": "OLE Automation",
+			"path32": "C:\\Windows\\SysWow64\\stdole2.tlb",
+			"path64": "C:\\Windows\\System32\\stdole2.tlb",
+			"versionMajor": 2,
+			"versionMinor": 0
+		},
+		{
+			"id": "{1FCDB98D-617D-4995-9736-2ED0E4746A10}",
+			"licence": "",
+			"name": "[IMPORTED] twinBASIC Shell Library v4.6.139",
+			"path32": "/Packages/tbShellLib",
+			"path64": "/Packages/tbShellLib",
+			"symbolId": "tbShellLib",
+			"versionBuild": "139",
+			"versionMajor": "4",
+			"versionMinor": "6",
+			"versionRevision": "0"
+		}
+	],
+	"project.settingsVersion": 1,
+	"project.startupObject": "Form1",
+	"project.warnings": {
+		"errors": [],
+		"ignored": []
+	},
+	"runtime.useUnicodeStandardLibrary": true
+}

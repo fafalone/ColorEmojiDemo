@@ -1,0 +1,29 @@
+[ PredeclaredId (True) ]
+Class D2D1
+
+Private Const sc_redShift   = 16
+Private Const sc_greenShift = 8
+Private Const sc_blueShift  = 0
+
+Private Const sc_redMask = &Hff << sc_redShift
+Private Const sc_greenMask = &Hff << sc_greenShift
+Private Const sc_blueMask = &Hff << sc_blueShift
+        
+Public Function ColorF(ByVal clr As D2D1_COLORS, Optional alpha As Single = 1.0) As D2D1_COLOR_F
+	InitColor(ColorF, clr, alpha)
+End Function
+Public Function ColorF(ByVal red As Long, ByVal green As Long, ByVal blue As Long, Optional ByVal alpha As Single = 1.0) As D2D1_COLOR_F
+	ColorF.r = red
+    ColorF.g = green
+    ColorF.b = blue
+    ColorF.a = alpha
+End Function
+
+Private Sub InitColor(u As D2D1_COLOR_F, ByVal clr As Long, ByVal alpha As Single)
+    Dim r As Single = ((clr And sc_redMask) >> sc_redShift) / 255
+    Dim g As Single = ((clr And sc_greenMask) >> sc_greenShift) / 255
+    Dim b As Single = ((clr And sc_blueMask) >> sc_blueShift) / 255
+    Dim a As Single = alpha
+    u.r = r: u.g = g: u.b = b: u.a = a
+End Sub
+End Class
