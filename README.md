@@ -14,3 +14,9 @@ twinBASIC Beta 297 or newer is reommended to compile, though other recent versio
 There's no external dependencies.
 
 **IMPORTANT:** There's (as of this writing) currently a bug in tB where the debugger used for running in the IDE causes crashes. So this demo will only work when fully compiled to an exe. This is an issue with all DirectX stuff.
+
+## Other versions
+
+There's also a VB6 version of this project, using oleexp.tlb instead of tbShellLib
+
+[[VB6/Win8+] Using DirectX to show emojis with color](https://www.vbforums.com/showthread.php?899901-VB6-Win8-Using-DirectX-to-show-emojis-with-color)
