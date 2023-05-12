@@ -55,7 +55,7 @@
 		"ScaleLeft": 0,
 		"ScaleMode": "vbTwips",
 		"ScaleTop": 0,
-		"ScaleWidth": 10260,
+		"ScaleWidth": 6900,
 		"ShowInTaskbar": true,
 		"StartupPosition": "vbStartUpScreen",
 		"TabFocusAutoSelect": false,
@@ -66,7 +66,7 @@
 		"Visible": true,
 		"WhatsThisButton": false,
 		"WhatsThisHelp": false,
-		"Width": 684,
+		"Width": 460,
 		"WindowState": "vbNormal",
 		"__IDEOptions": {
 			"alignToGrid": false,
@@ -76,7 +76,7 @@
 			"showGrid": true,
 			"showOutlines": false
 		},
-		"__lastUpdateMarker": 4281628466,
+		"__lastUpdateMarker": 2832005784,
 		"_className": "Form",
 		"_clsid": "{33AD4F38-6699-11CF-B70C-00AA0060D393}"
 	}

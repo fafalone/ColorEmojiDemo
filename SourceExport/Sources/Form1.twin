@@ -192,7 +192,7 @@ Private Function FormWndProc(ByVal hWnd As LongPtr, ByVal uMsg As Long, ByVal wP
         Case WM_DESTROY
             Call UnSubclass2(hWnd, AddressOf FormWndProc, uIdSubclass)
     End Select
-    
+
     Return DefSubclassProc(hWnd, uMsg, wParam, lParam)
 End Function
 
