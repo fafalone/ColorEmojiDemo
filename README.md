@@ -6,6 +6,9 @@ twinBASIC DirectX Color Emoji Demo
 Unfortunately the basic Windows GDI functions don't support colored fonts, so even if you have Unicode-supporting controls, your emojis would only show in black and white, just like when you paste them in Windows Explorer. This is a simple demo that shows how to use Direct2D and DirectWrite to display emojis in color. It's mostly based on [this C++ example](https://stackoverflow.com/a/71640767/6065864) by Code Doggo; for simplicity, I render it directly onto a Form rather than create my own window, which would be less useful for tB programmers anyway. There's limited use in this current forum, the ultimate goal here would be to turn this into an edit control.
 
 ## Updates
+
+**Update (19 Dec 2023):** .twinproj updated to reference WinDevLib (formerly tbShellLib) 7.0-- this eliminates package errors that tB did not raise at the time this project was initially released.
+
 **Update (12 May 2023):** Project updated to use new public current version of tbShellLib; it previously used a private version that different from the current public release. If you had issues with this in a new project, simply update the tbShellLib reference.
 
 ## Requirements
