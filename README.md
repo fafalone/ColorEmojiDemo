@@ -7,6 +7,8 @@ Unfortunately the basic Windows GDI functions don't support colored fonts, so ev
 
 ## Updates
 
+**Update (03 Mar 2024):** .twinproj has been updated to use a more recent version of WinDevLib (formerly tbShellLib) due to errors in the package tB did not raise at the time this project was released.
+
 **Update (19 Dec 2023):** .twinproj updated to reference WinDevLib (formerly tbShellLib) 7.0-- this eliminates package errors that tB did not raise at the time this project was initially released.
 
 **Update (12 May 2023):** Project updated to use new public current version of tbShellLib; it previously used a private version that different from the current public release. If you had issues with this in a new project, simply update the tbShellLib reference.
