@@ -1,6 +1,6 @@
-[ Description ("") ]
-[ FormDesignerId ("6F8E321C-0C25-436B-9660-62530486ED8D") ]
-[ PredeclaredId ]
+[Description("Direct2D ColorEmojiDemo")]
+[FormDesignerId("6F8E321C-0C25-436B-9660-62530486ED8D")]
+[PredeclaredId]
 Class Form1
 
 
@@ -65,12 +65,12 @@ If RenderTarget Is Nothing Then
     hwndProps.hwnd = WindowHandle
     hwndProps.pixelSize = size
     Set RenderTarget = Direct2dFactory.CreateHwndRenderTarget(rtProps, hwndProps)
-    hr = Err.LastHResult
+    hr = Err.LastHresult
     If SUCCEEDED(hr) Then
         Dim clrBlack As D2D1_COLOR_F
         clrBlack.a = 1#
         Set TextBlackBrush = RenderTarget.CreateSolidColorBrush(clrBlack, vbNullPtr)
-        hr = Err.LastHResult
+        hr = Err.LastHresult
         DebugAppend "D2D1CreateFactory::CreateHwndRenderTarget succeeded; RenderTarget.CreateSolidColorBrush hr=0x" & Hex$(hr)
     Else
         DebugAppend "D2D1CreateFactory::CreateHwndRenderTarget failed, hr=0x" & Hex$(hr)
@@ -101,7 +101,7 @@ Public Function OnRender() As Long
         RenderCanvasArea.Height = rc.Bottom
         clrWhite.r = 1#: clrWhite.g = 1#: clrWhite.b = 1#: clrWhite.a = 1#
         RenderTarget.Clear clrWhite ' D2D1.ColorF(White)
-        hr = Err.LastHResult
+        hr = Err.LastHresult
         If SUCCEEDED(hr) Then
             Set TextFormat = DWriteFactory.CreateTextFormat(StrPtr("Segoe UI"), _
                                                             Nothing, _
@@ -110,7 +110,7 @@ Public Function OnRender() As Long
                                                             DWRITE_FONT_STRETCH_NORMAL, _
                                                             25, _
                                                             StrPtr("en-us"))
-            hr = Err.LastHResult
+            hr = Err.LastHresult
             If (SUCCEEDED(hr)) And ((TextFormat Is Nothing) = False) Then
                 TextFormat.SetTextAlignment (DWRITE_TEXT_ALIGNMENT_LEADING)
                 TextFormat.SetParagraphAlignment (DWRITE_PARAGRAPH_ALIGNMENT_NEAR)
@@ -120,13 +120,13 @@ Public Function OnRender() As Long
                 TextCanvasArea.Right = RenderCanvasArea.width
                 TextCanvasArea.Bottom = RenderCanvasArea.Height
                 
-                RenderTarget.DrawText StrPtr(DISPLAY_TEXT), Len(DISPLAY_TEXT), ByVal ObjPtr(TextFormat), TextCanvasArea, TextBlackBrush, D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT, 0
+                RenderTarget.DrawText StrPtr(DISPLAY_TEXT), Len(DISPLAY_TEXT), TextFormat, TextCanvasArea, TextBlackBrush, D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT, 0
                 
             End If
         End If
         
         RenderTarget.EndDraw ByVal 0, ByVal 0
-        hr = Err.LastHResult
+        hr = Err.LastHresult
     End If
     
     If hr = D2DERR_RECREATE_TARGET Then
@@ -165,8 +165,8 @@ End Function
 Private Function FormWndProc(ByVal hWnd As LongPtr, ByVal uMsg As Long, ByVal wParam As LongPtr, ByVal lParam As LongPtr, ByVal uIdSubclass As LongPtr, ByVal dwRefData As LongPtr) As LongPtr
 	Select Case uMsg
         Case WM_SIZE
-            Dim cx As Long = LoWord(CLng(lParam))
-            Dim cy As Long = HiWord(CLng(lParam))
+            Dim cx As Long = LOWORD(CLng(lParam))
+            Dim cy As Long = HIWORD(CLng(lParam))
             
             If RenderTarget IsNot Nothing Then
                 Dim tSz As D2D1_SIZE_U

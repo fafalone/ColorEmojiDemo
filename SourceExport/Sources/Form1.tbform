@@ -73,10 +73,11 @@
 			"gridHeight": 10,
 			"gridWidth": 10,
 			"lockedControls": [],
+			"multiColoredGrabbers": false,
 			"showGrid": true,
 			"showOutlines": false
 		},
-		"__lastUpdateMarker": 2832005784,
+		"__lastUpdateMarker": 4192280143,
 		"_className": "Form",
 		"_clsid": "{33AD4F38-6699-11CF-B70C-00AA0060D393}"
 	}
