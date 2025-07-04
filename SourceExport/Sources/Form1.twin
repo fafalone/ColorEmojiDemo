@@ -11,14 +11,14 @@ Private DWriteFactory As IDWriteFactory
 Private Direct2dFactory As ID2D1Factory
 Private RenderTarget As ID2D1HwndRenderTarget
 Private TextBlackBrush As ID2D1SolidColorBrush
-
-Public Const dbg_PrintToImmediate As Boolean = True 'This control has very extensive debug information, you may not want
+ 
+Private Const dbg_PrintToImmediate As Boolean = True 'This control has very extensive debug information, you may not want
                                                       'to see that in your IDE.
-Public Const dbg_IncludeDate As Boolean = True 'Prefix all Debug output with the date and time, [yyyy-mm-dd Hh:Mm:Ss]
-Public Const dbg_IncludeName As Boolean = False 'Include Ambient.Name
-Public Const dbg_dtFormat As String = "yyyy-mm-dd Hh:nn:Ss"
-Public Const dbg_RaiseEvent As Boolean = False 'Raise DebugMessage event
-Public Const dbg_MinLevel As Long = 0&   'Only log to immediate/file messages >= this level
+Private Const dbg_IncludeDate As Boolean = True 'Prefix all Debug output with the date and time, [yyyy-mm-dd Hh:Mm:Ss]
+Private Const dbg_IncludeName As Boolean = False 'Include Ambient.Name
+Private Const dbg_dtFormat As String = "yyyy-mm-dd Hh:nn:Ss"
+Private Const dbg_RaiseEvent As Boolean = False 'Raise DebugMessage event
+Private Const dbg_MinLevel As Long = 0&   'Only log to immediate/file messages >= this level
 
 Public Sub DebugAppend(ByVal sMsg As String, Optional ilvl As Long = 0)
 If ilvl < dbg_MinLevel Then Exit Sub
