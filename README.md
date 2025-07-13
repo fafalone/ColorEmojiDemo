@@ -1,4 +1,4 @@
-**NOTE** - A similar but much more use project based on this code now exists-- I turned this concept into a full-featured Label control: [ColorFontLabel](https://github.com/fafalone/ColorFontLabel), which can be used as a tbcontrol in project or compiled into an ocx for VBA and VB6.
+**NOTE** - A similar but much more useful project based on this code now exists-- I turned this concept into a full-featured Label control: [ColorFontLabel](https://github.com/fafalone/ColorFontLabel), which can be used as a tbcontrol in project or compiled into an ocx for VBA and VB6.
 
 <img width="284" height="61" alt="462729117-1b239fa8-4d44-44eb-9e56-cb1737d2091c" src="https://github.com/user-attachments/assets/8ee9161d-32df-4ab0-82a9-5c37e1d4519c" />
 
