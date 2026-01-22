@@ -52,8 +52,8 @@ Return hr
 End Function
 
 Private Function CreateDeviceResources() As Long
-On Error Resume Next
-Dim hr As Long '= S_OK
+On Error GoTo e0
+Dim hr As Long = S_OK
 Dim rc As RECT
 If RenderTarget Is Nothing Then
     GetClientRect WindowHandle, rc
@@ -69,7 +69,7 @@ If RenderTarget Is Nothing Then
     If SUCCEEDED(hr) Then
         Dim clrBlack As D2D1_COLOR_F
         clrBlack.a = 1#
-        Set TextBlackBrush = RenderTarget.CreateSolidColorBrush(clrBlack, vbNullPtr)
+        Set TextBlackBrush = RenderTarget.CreateSolidColorBrush(clrBlack, ByVal vbNullPtr)
         hr = Err.LastHresult
         DebugAppend "D2D1CreateFactory::CreateHwndRenderTarget succeeded; RenderTarget.CreateSolidColorBrush hr=0x" & Hex$(hr)
     Else
@@ -179,13 +179,13 @@ Private Function FormWndProc(ByVal hWnd As LongPtr, ByVal uMsg As Long, ByVal wP
             Exit Function
         
         Case WM_DISPLAYCHANGE
-            InvalidateRect hWnd, vbNullPtr, CFALSE
+            InvalidateRect hWnd, ByVal vbNullPtr, CFALSE
             
             Exit Function
             
         Case WM_PAINT
             OnRender()
-            ValidateRect hWnd, vbNullPtr
+            ValidateRect hWnd, byval vbNullPtr
             
             Exit Function
             
